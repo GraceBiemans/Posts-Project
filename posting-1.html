@@ -1,0 +1,88 @@
+<!-- Grace Biemans geb965 -->
+<!DOCTYPE html>
+
+
+<html>
+ <head>
+
+    <title> posting.html </title>
+
+</head>
+
+<body>
+
+        Topic: <label>
+        <input id="topic" name="topic" type="text" />
+    </label> <br>
+        Data: <br> <label>
+        <input id="data" name="data" type="text" />
+    </label><br><br>
+        <button onclick="postMessage()" > Post Message</button><br>
+
+    <label for="prevPosts"></label><textarea id="prevPosts">   </textarea>
+
+    <br>
+    <div>
+        <form>
+            <input type="radio" id="topic-ascend" name="sort" checked=true> Topic (Asc.)
+            <input type="radio" id="topic-descend" name="sort" > Topic (Desc.)
+            <input type="radio" id="time-ascend" name="sort" > Time (Asc.)
+            <input type="radio" id="time-descend" name="sort" > Time (Desc.)
+        </form>
+    </div>
+
+    <script type = "text/javascript">
+    
+    function postMessage()
+    {
+        let http = new XMLHttpRequest();
+        let url = '/postmessage';
+
+        var sort = document.forms[0];
+        var checked = "";
+        var i;
+        for (i = 0; i < sort.length; i++) {
+            if (sort[i].checked) {
+                checked = sort[i].id;
+            }
+        }      
+
+        let params = "topic=" + document.getElementById("topic").value + "&data=" + document.getElementById("data").value + "&checked=" + checked;
+
+        http.open('POST', url, true);
+
+        http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+        http.onreadystatechange = function()
+        {
+            if(http.readyState === 4 && http.status === 200)
+            {
+                alert("Post saved");
+                getPosts();
+            }
+        };
+        http.send(params);
+    }
+
+
+    function getPosts()
+    {
+        let http = new XMLHttpRequest();
+        let url = '/postmessage';
+        http.open('GET', url, true);
+
+        http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+        http.onreadystatechange = function() {
+            if(http.readyState === 4 && http.status === 200) {
+                document.getElementById("prevPosts").value = http.responseText;
+            }
+        };
+        http.send();
+    }
+
+    </script>
+
+    </body>
+    
+    </html>
